@@ -16,6 +16,7 @@ Check out the live application [here](https://yt-video-scripter.streamlit.app/).
 
 ## Screenshots  
 ![App Screenshot](https://github.com/gunjanBabu29/YT-Video-Script-Summarizer-/blob/main/img.jpg)  
+![App Screenshot](https://github.com/gunjanBabu29/YT-Video-Script-Summarizer-/blob/main/img1.jpg)
  
 
 ## Installation  
