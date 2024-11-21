@@ -12,7 +12,11 @@ A Streamlit-based web application that extracts and summarizes YouTube video scr
 - Simple and responsive user interface for better usability.  
 
 ## Demo  
-Check out the live application [here](https://yt-video-scripter.streamlit.app/).  
+Check out the live application [here](https://yt-video-scripter.streamlit.app/). 
+## Working Video
+[![Watch the video](path_to_thumbnail/thumbnail.png)](https://github.com/gunjanBabu29/YT-Video-Script-Summarizer-/blob/main/assets/ytvideo.mkv)
+
+
 
 ## Screenshots  
 ![App Screenshot](https://github.com/gunjanBabu29/YT-Video-Script-Summarizer-/blob/main/assets/img.jpg)  
