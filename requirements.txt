@@ -1,0 +1,9 @@
+streamlit
+googleapis-common-protos
+google-api-core
+google-auth
+google-api-python-client
+google-generativeai
+python-dotenv
+youtube-transcript-api
+pathlib
