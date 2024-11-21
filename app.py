@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Load environment variables
 load_dotenv()
-genai.configure(api_key=os.getenv("AIzaSyBhvAVZ6Z1DMuKjf34XKL_vPwrFZE-vqNw"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Google API Key for YouTube Data API
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
