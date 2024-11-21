@@ -15,7 +15,7 @@ A Streamlit-based web application that extracts and summarizes YouTube video scr
 Check out the live application [here](https://yt-video-scripter.streamlit.app/).  
 
 ## Screenshots  
-![App Screenshot](https://via.placeholder.com/1200x600?text=Screenshot+Placeholder)  
+![App Screenshot](https://github.com/gunjanBabu29/YT-Video-Script-Summarizer-/image.png  
 *Replace this placeholder with your actual screenshot.*  
 
 ## Installation  
