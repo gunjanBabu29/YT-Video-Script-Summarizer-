@@ -1,10 +1,12 @@
 import streamlit as st
+import warnings
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse, parse_qs
 import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from googleapiclient.discovery import build
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Load environment variables
 load_dotenv()
