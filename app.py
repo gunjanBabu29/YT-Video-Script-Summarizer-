@@ -170,6 +170,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+st.subheader("Note : Please provide a lecture that's less than 1 hour for the summary")
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
 if youtube_link:
