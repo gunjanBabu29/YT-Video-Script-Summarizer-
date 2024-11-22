@@ -176,8 +176,8 @@ st.markdown(
 st.markdown("""
     <style>
     .custom-subheader {
-        font-size: 25px; /* Adjust size as needed */
-        color: #FFFFF7; /* Customize color */
+        font-size: 21px; /* Adjust size as needed */
+        color: #d0d9d2; /* Customize color */
         font-weight: bold;
         margin-bottom: 10px; /* Add some spacing below */
     }
