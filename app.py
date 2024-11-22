@@ -185,7 +185,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Use the custom class for the subheader
-st.markdown('<div class="custom-subheader">Note : Please provide a lecture that\'s less than 1 hour for the summary</div>', unsafe_allow_html=True)
+st.markdown('<div class="custom-subheader">Note : Please provide a Video that\'s less than 1 hour for the summary</div>', unsafe_allow_html=True)
 
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
