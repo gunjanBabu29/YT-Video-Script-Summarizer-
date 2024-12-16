@@ -1,12 +1,10 @@
 import streamlit as st
-import warnings
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse, parse_qs
 import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from googleapiclient.discovery import build
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Load environment variables
 load_dotenv()
@@ -19,8 +17,8 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 english_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
 and provide the most important points in English within 250 words."""
 
-hindi_prompt = """आप एक यूट्यूब वीडियो सारांशकर्ता हैं। प्रतिलिपि पाठ का सारांश तैयार करें
-और 250 शब्दों के भीतर हिंदी में सबसे महत्वपूर्ण बिंदु प्रदान करें।"""
+hindi_prompt = """Aap ek YouTube video summary creator hain. Transcript text ka summary 
+tayar karein aur 250 shabdon ke andar Hindi mein sabse important points provide karein"""
 
 # Inject custom CSS
 def add_custom_css():
@@ -170,29 +168,12 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-
-# Inject custom CSS
-st.markdown("""
-    <style>
-    .custom-subheader {
-        font-size: 21px; /* Adjust size as needed */
-        color: #d0d9d2; /* Customize color */
-        font-weight: bold;
-        margin-bottom: 10px; /* Add some spacing below */
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Use the custom class for the subheader
-st.markdown('<div class="custom-subheader">Note : Please provide a Video that\'s less than 1 hour for the summary</div>', unsafe_allow_html=True)
-
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
 if youtube_link:
     video_id = get_video_id(youtube_link)
     if video_id:
-        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
+        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_container_width=True)
 
         # Display video details in a single aligned row
         channel_name, views, subscribers, likes = get_video_details(video_id)
