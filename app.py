@@ -135,21 +135,39 @@ def get_video_details(video_id):
     except Exception as e:
         return f"Error fetching video details: {str(e)}", "0", "N/A", "N/A"
 
-# Function to extract transcript details
-def extract_transcript_details(youtube_video_url):
+# Function to fetch transcript with fallback
+def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
+
+    # Try to fetch transcript using YouTubeTranscriptApi
     try:
         transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=["hi", "en"])
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
-    except TranscriptsDisabled:
-        return None, "Transcripts are disabled for this video."
-    except NoTranscriptFound:
-        return None, "No transcript found for this video."
+    except (TranscriptsDisabled, NoTranscriptFound):
+        # If no transcript is found, fallback to YouTube API captions
+        transcript, error = fetch_captions_with_youtube_api(video_id)
+        if error:
+            return None, error
+        else:
+            return transcript, None
     except Exception as e:
         return None, f"An error occurred: {str(e)}"
+
+# Fallback function to fetch captions from YouTube API
+def fetch_captions_with_youtube_api(video_id):
+    try:
+        youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+        request = youtube.captions().list(part="snippet", videoId=video_id)
+        response = request.execute()
+        if response["items"]:
+            return "Captions found", None
+        else:
+            return None, "No captions available for this video."
+    except Exception as e:
+        return None, f"Error fetching captions: {str(e)}"
 
 # Function to generate content using Gemini
 def generate_gemini_content(transcript_text, prompt):
@@ -168,12 +186,13 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 youtube_link = st.text_input("Enter YouTube Video Link:")
 
 if youtube_link:
     video_id = get_video_id(youtube_link)
     if video_id:
-        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_container_width=True)
+        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
 
         # Display video details in a single aligned row
         channel_name, views, subscribers, likes = get_video_details(video_id)
@@ -190,7 +209,7 @@ if youtube_link:
         )
 
 if st.button("Get Detailed Notes"):
-    transcript_text, error = extract_transcript_details(youtube_link)
+    transcript_text, error = fetch_transcript(youtube_link)
 
     if error:
         st.error(error)
