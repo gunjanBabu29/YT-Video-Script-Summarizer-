@@ -226,7 +226,7 @@ if st.button("Get Detailed Notes"):
     else:
         # Generate English summary
         english_summary = generate_gemini_content(transcript_text, english_prompt)
-        st.markdown("<div class='summary-section'><h2>Summary in English:</h2>", unsafe_allow_html=True)
+        st.markdown("<div class='summary-section'><h2>Detailed Summary 📝:-</h2>", unsafe_allow_html=True)
         st.write(english_summary)
 
         # Generate Hindi summary
