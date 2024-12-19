@@ -15,7 +15,7 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 # Prompts for Gemini
 english_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
-and provide the most important points in English within 250 words."""
+and provide the most important points in English within 500 words."""
 
 hindi_prompt = """Aap ek YouTube video summary creator hain. Transcript text ka summary 
 tayar karein aur 250 shabdon ke andar Hindi mein sabse important points provide karein"""
