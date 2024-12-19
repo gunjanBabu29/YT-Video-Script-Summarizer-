@@ -181,7 +181,7 @@ st.markdown(
     """
     <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube Logo" width="40" style="margin-right: 10px;">
-        <h1>YouTube Transcript to Detailed Notes Converter 👇</h1>
+        <h1>YouTube Transcript Summarizer📱</h1>
     </div>
     """,
     unsafe_allow_html=True,
@@ -192,7 +192,7 @@ youtube_link = st.text_input("Enter YouTube Video Link:")
 if youtube_link:
     video_id = get_video_id(youtube_link)
     if video_id:
-        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
+        st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_container_width=True)
 
         # Display video details in a single aligned row
         channel_name, views, subscribers, likes = get_video_details(video_id)
