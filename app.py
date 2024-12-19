@@ -2,7 +2,7 @@ import streamlit as st
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse, parse_qs
-import google.generativeai as genai
+import google.generativeai as genai 
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from googleapiclient.discovery import build
 
@@ -39,8 +39,17 @@ def add_custom_css():
             }
             h1 {
                 text-align: center;
-                color: #2E86C1;
+                background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+                -webkit-background-clip: text;
+                color: transparent;
                 margin-bottom: 20px;
+            }
+            .rainbow-divider {
+                height: 5px;
+                color: red;
+                background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+                border: none;
+                margin: 10px 0 20px 0;
             }
             .info-line {
                 display: flex;
@@ -181,8 +190,9 @@ st.markdown(
     """
     <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube Logo" width="40" style="margin-right: 10px;">
-        <h1>YouTube Transcript Summarizer📱</h1>
+        <h1>YouTube Transcript Summarizer</h1>
     </div>
+    <hr class="rainbow-divider">
     """,
     unsafe_allow_html=True,
 )
