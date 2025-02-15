@@ -17,8 +17,8 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 english_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
 and provide the most important points in English within 500 words."""
 
-hindi_prompt = """Aap ek YouTube video summary creator hain. Transcript text ka summary 
-tayar karein aur 250 shabdon ke andar Hindi mein sabse important points provide karein"""
+hindi_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
+and provide the most important points in Hinglish within 500 words."""
 
 # Inject custom CSS
 def add_custom_css():
