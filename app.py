@@ -16,7 +16,6 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 # Prompts for Gemini
 english_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
 and provide the most important points in English within 500 words."""
-
 hindi_prompt = """You are a YouTube video summarizer.~ Summarize the transcript text
 and provide the most important points in Hinglish within 500 words."""
 
@@ -118,7 +117,6 @@ def get_video_details(video_id):
         youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
         request = youtube.videos().list(part="snippet,statistics", id=video_id)
         response = request.execute()
-
         if "items" in response and len(response["items"]) > 0:
             snippet = response["items"][0]["snippet"]
             channel_id = snippet["channelId"]
@@ -126,7 +124,6 @@ def get_video_details(video_id):
             statistics = response["items"][0]["statistics"]
             views = "{:,}".format(int(statistics.get("viewCount", 0)))
             likes = "{:,}".format(int(statistics.get("likeCount", 0))) if "likeCount" in statistics else "N/A"
-
             # Fetching subscriber count from channel details
             channel_request = youtube.channels().list(part="statistics", id=channel_id)
             channel_response = channel_request.execute()
@@ -136,11 +133,9 @@ def get_video_details(video_id):
                     subscriber_count = "{:,}".format(int(subscriber_count))
             else:
                 subscriber_count = "N/A"
-
             return channel_name, views, subscriber_count, likes
         else:
             return "Channel information unavailable", "0", "N/A", "N/A"
-
     except Exception as e:
         return f"Error fetching video details: {str(e)}", "0", "N/A", "N/A"
 
@@ -149,34 +144,16 @@ def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
-
+    
     # Try to fetch transcript using YouTubeTranscriptApi
     try:
-        transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=["hi", "en"])
+        transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi"])
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
     except (TranscriptsDisabled, NoTranscriptFound):
-        # If no transcript is found, fallback to YouTube API captions
-        transcript, error = fetch_captions_with_youtube_api(video_id)
-        if error:
-            return None, error
-        else:
-            return transcript, None
+        return None, "Transcript is disabled or not available for this video."
     except Exception as e:
-        return None, f"An error occurred: {str(e)}"
-
-# Fallback function to fetch captions from YouTube API
-def fetch_captions_with_youtube_api(video_id):
-    try:
-        youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-        request = youtube.captions().list(part="snippet", videoId=video_id)
-        response = request.execute()
-        if response["items"]:
-            return "Captions found", None
-        else:
-            return None, "No captions available for this video."
-    except Exception as e:
-        return None, f"Error fetching captions: {str(e)}"
+        return None, f"An error occurred while fetching the transcript: {str(e)}"
 
 # Function to generate content using Gemini
 def generate_gemini_content(transcript_text, prompt):
@@ -198,12 +175,10 @@ st.markdown(
 )
 
 youtube_link = st.text_input("Enter YouTube Video Link:")
-
 if youtube_link:
     video_id = get_video_id(youtube_link)
     if video_id:
         st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_container_width=True)
-
         # Display video details in a single aligned row
         channel_name, views, subscribers, likes = get_video_details(video_id)
         st.markdown(
@@ -220,7 +195,6 @@ if youtube_link:
 
 if st.button("Get Detailed Notes"):
     transcript_text, error = fetch_transcript(youtube_link)
-
     if error:
         st.error(error)
     else:
@@ -228,12 +202,10 @@ if st.button("Get Detailed Notes"):
         english_summary = generate_gemini_content(transcript_text, english_prompt)
         st.markdown("<div class='summary-section'><h2>Detailed Summary 📝:-</h2>", unsafe_allow_html=True)
         st.write(english_summary)
-
         # Generate Hindi summary
         hindi_summary = generate_gemini_content(transcript_text, hindi_prompt)
         st.markdown("<h2>Summary in Hindi:</h2></div>", unsafe_allow_html=True)
         st.write(hindi_summary)
-
         # Add a button to redirect to the YouTube video
         st.markdown(
             f"""
