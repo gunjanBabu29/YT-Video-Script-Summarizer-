@@ -4,6 +4,7 @@ import os
 from urllib.parse import urlparse, parse_qs, quote
 import google.generativeai as genai 
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
+from youtube_transcript_api.proxies import WebshareProxyConfig
 from googleapiclient.discovery import build
 import random  # For random facts
 
@@ -98,12 +99,21 @@ def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
-    
-    # Try to fetch transcript using YouTubeTranscriptApi
+
     try:
-        transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi"])
+        # Use rotating residential proxy
+        ytt_api = YouTubeTranscriptApi(
+            proxy_config=WebshareProxyConfig(
+                proxy_username=os.getenv("WEBSHARE_PROXY_USERNAME"),
+                proxy_password=os.getenv("WEBSHARE_PROXY_PASSWORD")
+            )
+        )
+
+        # Fetch transcript using proxy
+        transcript_data = ytt_api.fetch(video_id, languages=["en", "hi"])
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
+
     except (TranscriptsDisabled, NoTranscriptFound):
         return None, "Transcript is disabled or not available for this video."
     except Exception as e:
