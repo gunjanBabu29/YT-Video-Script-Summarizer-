@@ -7,4 +7,5 @@ google-generativeai
 python-dotenv
 youtube-transcript-api
 pathlib
-requests urllib3
+requests 
+urllib3
