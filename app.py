@@ -119,7 +119,7 @@ def preprocess_transcript(transcript_text):
 
 # Function to generate content using Gemini
 def generate_gemini_content(transcript_text, prompt, max_words):
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     # Configure safety settings to allow more flexibility
     safety_settings = {
         "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
@@ -153,6 +153,14 @@ def generate_gemini_content(transcript_text, prompt, max_words):
                 continue
     except Exception as e:
         return f"An error occurred while generating the summary: {str(e)}"
+    
+st.markdown(
+    """
+<link rel="stylesheet" href="styles.css">
+""",
+ unsafe_allow_html=True,
+
+)
 
 
 # Inject custom CSS
@@ -183,7 +191,7 @@ def add_custom_css():
                 font-weight: bold;
             }
             .header-border {
-                border-bottom: 5px solid #FF0000;
+                border-bottom: 5px solid #c64adf;
                 margin-top: 0;
             }
             .rainbow-divider {
