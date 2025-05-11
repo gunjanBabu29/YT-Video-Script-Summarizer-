@@ -33,31 +33,25 @@ def get_video_id(youtube_url):
     return None
 
 # Function to create social media share links
-def create_share_links(video_url, summary_text=None):
-    encoded_url = video_url.replace("https://", "").replace("http://", "")
-    encoded_summary = summary_text[:200] + "..." if summary_text and len(summary_text) > 200 else summary_text
-    twitter_link = f"https://twitter.com/intent/tweet?url= {encoded_url}&text={encoded_summary}"
-    facebook_link = f"https://www.facebook.com/sharer/sharer.php?u= {video_url}"
-    linkedin_link = f"https://www.linkedin.com/sharing/share-offsite/?url= {video_url}"
-    return {"Twitter": twitter_link, "Facebook": facebook_link, "LinkedIn": linkedin_link}
-
-# Function to fetch transcript with retry logic and proxy support
 def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
 
-    session = requests.Session()
-    retry = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    # Get proxy from environment variables
+    http_proxy = os.getenv("HTTP_PROXY")
+    https_proxy = os.getenv("HTTPS_PROXY")
+
+    proxies = {
+        "http": http_proxy,
+        "https": https_proxy
+    } if http_proxy and https_proxy else None
 
     try:
         transcript_data = YouTubeTranscriptApi.get_transcript(
             video_id,
             languages=["en", "hi"],
-            proxies=proxies
+            proxies=proxies  # 👈 Just pass dict, no Proxies class needed
         )
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
