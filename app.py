@@ -2,10 +2,9 @@ import streamlit as st
 from dotenv import load_dotenv
 import os
 from urllib.parse import urlparse, parse_qs
-import google.generativeai as genai 
+import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
-from youtube_transcript_api.proxies import Proxies
-import random  # For random facts
+import random  # For motivational facts
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -14,7 +13,7 @@ from requests.packages.urllib3.util.retry import Retry
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Use proxy from .env if available
+# Proxy setup from .env
 http_proxy = os.getenv("HTTP_PROXY")
 https_proxy = os.getenv("HTTPS_PROXY")
 
@@ -32,26 +31,23 @@ def get_video_id(youtube_url):
         return parsed_url.path[1:]
     return None
 
-# Function to create social media share links
+# Function to fetch transcript with retry logic and proxy support
 def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
 
-    # Get proxy from environment variables
-    http_proxy = os.getenv("HTTP_PROXY")
-    https_proxy = os.getenv("HTTPS_PROXY")
-
-    proxies = {
-        "http": http_proxy,
-        "https": https_proxy
-    } if http_proxy and https_proxy else None
+    session = requests.Session()
+    retry = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
 
     try:
         transcript_data = YouTubeTranscriptApi.get_transcript(
             video_id,
             languages=["en", "hi"],
-            proxies=proxies  # 👈 Just pass dict, no Proxies class needed
+            proxies=proxies
         )
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
@@ -69,7 +65,7 @@ def preprocess_transcript(transcript_text):
 
 # Function to generate content using Gemini
 def generate_gemini_content(transcript_text, prompt, max_words):
-    model = genai.GenerativeModel("gemini-1.5-flash")  # Changed to Flash for better rate limits
+    model = genai.GenerativeModel("gemini-1.5-flash")  # Using Flash for better rate limits
     safety_settings = {
         "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
         "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
@@ -113,13 +109,14 @@ MOTIVATIONAL_FACTS = [
     "It always seems impossible until it’s done. – Nelson Mandela"
 ]
 
-# UI Section
-st.markdown(
-    """
-    <link rel="stylesheet" href="styles.css">
-    """,
-    unsafe_allow_html=True,
-)
+# Function to create social media share links
+def create_share_links(video_url, summary_text=None):
+    encoded_url = video_url.replace("https://", "").replace("http://", "")
+    encoded_summary = summary_text[:200] + "..." if summary_text and len(summary_text) > 200 else summary_text
+    twitter_link = f"https://twitter.com/intent/tweet?url= {encoded_url}&text={encoded_summary}"
+    facebook_link = f"https://www.facebook.com/sharer/sharer.php?u= {video_url}"
+    linkedin_link = f"https://www.linkedin.com/sharing/share-offsite/?url= {video_url}"
+    return {"Twitter": twitter_link, "Facebook": facebook_link, "LinkedIn": linkedin_link}
 
 # Sidebar
 st.sidebar.title("Enter YT Video Link")
@@ -179,8 +176,8 @@ if submit and youtube_link:
                     # Generate Hindi Summary
                     hindi_summary = generate_gemini_content(transcript_text, """Aap ek YouTube video summary creator hain. Transcript text ka summary tayar karein aur 500 shabdon ke andar sabse important points provide karein.
                         - Introduction
-                        - MAIN pOINT
-                        - cONCLUSION""", max_words)
+                        - MAIN POINT
+                        - CONCLUSION""", max_words)
 
                     st.markdown("<h2>Summary in Hindi:</h2></div>", unsafe_allow_html=True)
                     st.write(hindi_summary)
