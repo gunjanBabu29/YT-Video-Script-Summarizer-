@@ -21,6 +21,11 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 http_proxy = os.getenv("HTTP_PROXY")
 https_proxy = os.getenv("HTTPS_PROXY")
 
+proxies = {
+    "http": http_proxy,
+    "https": https_proxy
+} if http_proxy and https_proxy else None
+
 # List of motivational facts
 MOTIVATIONAL_FACTS = [
     "Stay hungry, stay foolish. – Steve Jobs",
