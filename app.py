@@ -6,9 +6,7 @@ import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 from googleapiclient.discovery import build
 import random  # For random facts
-import requests
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+
 
 # Load environment variables
 load_dotenv()
@@ -16,15 +14,6 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Google API Key for YouTube Data API
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-
-# Proxy setup from .env
-http_proxy = os.getenv("HTTP_PROXY")
-https_proxy = os.getenv("HTTPS_PROXY")
-
-proxies = {
-    "http": http_proxy,
-    "https": https_proxy
-} if http_proxy and https_proxy else None
 
 # List of motivational facts
 MOTIVATIONAL_FACTS = [
@@ -110,26 +99,16 @@ def fetch_transcript(youtube_video_url):
     video_id = get_video_id(youtube_video_url)
     if not video_id:
         return None, "Invalid YouTube URL. Please check the link and try again."
-
-    session = requests.Session()
-    retry = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-
+    
+    # Try to fetch transcript using YouTubeTranscriptApi
     try:
-        transcript_data = YouTubeTranscriptApi.get_transcript(
-            video_id,
-            languages=["en", "hi"],
-            proxies=proxies
-        )
+        transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "hi"])
         transcript = " ".join([item["text"] for item in transcript_data])
         return transcript, None
     except (TranscriptsDisabled, NoTranscriptFound):
         return None, "Transcript is disabled or not available for this video."
     except Exception as e:
         return None, f"An error occurred while fetching the transcript: {str(e)}"
-
 
 # Function to preprocess transcript to avoid triggering safety filters
 def preprocess_transcript(transcript_text):
